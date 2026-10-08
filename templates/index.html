@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lightweight Flask Sidebar</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body {
+            display: flex;
+            height: 100vh;
+            background-color: #f4f6f9;
+            color: #333;
+        }
+
+        /* Sidebar Container */
+        .sidebar {
+            width: 260px;
+            background-color: #1e293b;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            padding: 20px 0;
+        }
+
+        .sidebar-brand {
+            font-size: 20px;
+            font-weight: bold;
+            padding: 0 24px 20px 24px;
+            border-bottom: 1px solid #334155;
+            margin-bottom: 20px;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-item a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            color: #cbd5e1;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-size: 15px;
+        }
+
+        .sidebar-item a:hover {
+            background-color: #334155;
+            color: #fff;
+        }
+
+        /* Active Attribute Styling */
+        .sidebar-item.active a {
+            background-color: #2563eb;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Main Content Layout */
+        .main-content {
+            flex-1: 1;
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            margin-bottom: 15px;
+            color: #0f172a;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Element -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">Flask App</div>
+        <ul class="sidebar-menu">
+            <!-- Dynamically rendering the sidebar attribute -->
+            {% for link in sidebar_links %}
+                <li class="sidebar-item {% if link.name == active_page %}active{% endif %}">
+                    <a href="{{ link.url }}">
+                        <span>{{ link.icon }}</span>
+                        {{ link.name }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+        <div class="canvas-container">
+            <!-- 
+            Flask dynamically populates the texture URL path.
+            Adjust the true/false template flags based on your route's context dictionary variables.
+            -->
+            <canvas 
+            id="compositeCanvas" 
+            width="300" 
+            height="300"
+            data-texture-url="{{ url_for('static', filename='images/texture.png') }}"
+            data-tile-a-active="{{ 'true' if asset_a_unlocked else 'false' }}"
+            data-tile-b-active="{{ 'true' if asset_b_unlocked else 'false' }}"
+            data-tile-c-active="{{ 'true' if asset_c_unlocked else 'false' }}">
+            </canvas>
+        </div>
+
+        <div class="controls">
+            <button id="toggleA" class="toggle-btn">Toggle Tile A Text (Green)</button>
+            <button id="toggleB" class="toggle-btn">Toggle Tile B Text (Orange)</button>
+            <button id="toggleC" class="toggle-btn">Toggle Tile C Text (Red)</button>
+        </div>
+
+        <p class="caption">The interface dynamically crops, layers, and shifts individual tile text color matrices based on live server parameters.</p>
+    </aside>
+
+    <!-- Content Workspace -->
+    <main class="main-content">
+        <div class="card">
+            <h1>Welcome to the {{ active_page }}</h1>
+            <p>This layout is constructed using lightweight native CSS Flexbox paired with dynamic Jinja2 logic controlled entirely via Flask context variables.</p>
+        </div>
+    </main>
+
+</body>
+</html>
